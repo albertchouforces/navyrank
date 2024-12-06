@@ -33,7 +33,7 @@ export const navyRanks: NavyRank[] = [
     id: 4,
     rank: "Master Sailor",
     description: "Senior appointment for experienced Sailor First Class",
-    fact: "This specialist appointment recognizes leadership and technical expertise while remaining at the S1 rank level.",
+    fact: "A Master Sailor is equal to a Master Corporal of the Canadian Army and the Royal Canadian Air Force.",
     imageUrl: "/ranks/ms.png"
   },
   {
