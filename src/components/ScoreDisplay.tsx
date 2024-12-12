@@ -1,4 +1,11 @@
-import { RotateCcw, Trophy } from 'lucide-react';
+import { RotateCcw, Trophy, Clock } from 'lucide-react';
+import { Timer } from './Timer';
+
+interface BestRun {
+  time: number;
+  score: number;
+  accuracy: number;
+}
 
 interface ScoreDisplayProps {
   correct: number;
@@ -7,6 +14,8 @@ interface ScoreDisplayProps {
   onRestart: () => void;
   isFinished: boolean;
   totalQuestions: number;
+  currentTime: number;
+  bestRun: BestRun | null;
 }
 
 export function ScoreDisplay({ 
@@ -15,13 +24,15 @@ export function ScoreDisplay({
   highScore, 
   onRestart,
   isFinished,
-  totalQuestions
+  totalQuestions,
+  currentTime,
+  bestRun
 }: ScoreDisplayProps) {
   const percentage = total === 0 ? 0 : Math.round((correct / total) * 100);
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="flex gap-4 text-lg font-semibold">
+      <div className="flex gap-4 text-lg font-semibold flex-wrap justify-center">
         <div className="bg-white px-4 py-2 rounded-lg shadow-sm">
           <span className="text-gray-600">Score: </span>
           <span className="text-blue-600">{correct}/{total}</span>
@@ -30,10 +41,26 @@ export function ScoreDisplay({
           <span className="text-gray-600">Accuracy: </span>
           <span className="text-blue-600">{percentage}%</span>
         </div>
-        <div className="bg-white px-4 py-2 rounded-lg shadow-sm">
-          <span className="text-gray-600">High Score: </span>
-          <span className="text-blue-600">{highScore}</span>
+        <div className="bg-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
+          <Trophy size={16} className="text-gray-600" />
+          <span className="text-gray-600">Best: </span>
+          <span className="text-blue-600">
+            {highScore}
+            {bestRun && ` (${bestRun.accuracy}%)`}
+          </span>
         </div>
+        <Timer time={currentTime} />
+        {bestRun && (
+          <div className="bg-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
+            <Clock size={16} className="text-gray-600" />
+            <span className="text-gray-600">Best: </span>
+            <span className="text-blue-600 font-mono">
+              {Math.floor(bestRun.time / 60000).toString().padStart(2, '0')}:
+              {Math.floor((bestRun.time % 60000) / 1000).toString().padStart(2, '0')}.
+              {Math.floor((bestRun.time % 1000) / 10).toString().padStart(2, '0')}
+            </span>
+          </div>
+        )}
       </div>
 
       {isFinished && (
@@ -47,6 +74,11 @@ export function ScoreDisplay({
           </p>
           {correct > highScore && (
             <p className="text-green-600 font-semibold mb-4">New High Score!</p>
+          )}
+          {bestRun && (
+            correct >= bestRun.score && currentTime < bestRun.time ? (
+              <p className="text-green-600 font-semibold mb-4">New Best Time!</p>
+            ) : null
           )}
         </div>
       )}
